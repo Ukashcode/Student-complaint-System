@@ -1,24 +1,80 @@
-# student-complaint-system/.gitignore
-
-# Node modules
+# =========================
+# Dependencies
+# =========================
 node_modules/
+client/node_modules/
+server/node_modules/
 
-# Environment variables
+# =========================
+# Environment Variables (VERY IMPORTANT)
+# =========================
 .env
-.env.local
+.env.*
+!.env.example
+server/.env
 
-# Build outputs
+# =========================
+# Logs
+# =========================
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# =========================
+# Build / Production
+# =========================
 dist/
 build/
+client/dist/
+client/build/
+.next
+out
 
-# IDE specific files
+# =========================
+# Coverage & Testing
+# =========================
+coverage/
+.nyc_output/
+
+# =========================
+# Cache & Temp Files
+# =========================
+.cache/
+.parcel-cache/
+.temp
+.eslintcache
+.stylelintcache
+.node_repl_history
+
+# =========================
+# OS & System Files
+# =========================
+.DS_Store
+
+# =========================
+# IDE / Editor Files
+# =========================
 .vscode/
 .idea/
+.vscode-test/
 
-# Frontend specific
-client/node_modules/
-client/dist/
+# =========================
+# Misc
+# =========================
+*.pid
+*.seed
+*.pid.lock
+*.tsbuildinfo
+.npm
+.yarn-integrity
 
-# Backend specific
-server/node_modules/
-server/.env # Crucial: Don't commit sensitive server env variables
+# =========================
+# Optional Frameworks
+# =========================
+.nuxt
+.svelte-kit/
+.docusaurus/
+.serverless/
+.firebase/
