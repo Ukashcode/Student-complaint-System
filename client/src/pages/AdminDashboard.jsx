@@ -35,9 +35,7 @@ export default function AdminDashboard() {
   const [updateMsg, setUpdateMsg] = useState({ text: '', type: '' });
   const [error, setError] = useState('');
 
-  useEffect(() => {
-    fetchAll();
-  }, []);
+  useEffect(() => { fetchAll(); }, []);
 
   const fetchAll = async () => {
     try {
@@ -54,7 +52,6 @@ export default function AdminDashboard() {
     }
   };
 
-  // Open a complaint and pre-fill the remark form
   const openComplaint = (c) => {
     setSelected(c);
     setRemarkForm({ status: c.status, adminRemarks: c.adminRemarks || '' });
@@ -75,11 +72,9 @@ export default function AdminDashboard() {
         `/complaints/admin/${selected._id}/status`,
         remarkForm
       );
-      // Update in the list
       setComplaints((prev) => prev.map((c) => c._id === data._id ? data : c));
       setSelected(data);
       setRemarkForm({ status: data.status, adminRemarks: data.adminRemarks || '' });
-      // Update stats
       const statsRes = await API.get('/complaints/admin/stats');
       setStats(statsRes.data);
       setUpdateMsg({ text: 'Complaint updated successfully!', type: 'success' });
@@ -90,7 +85,20 @@ export default function AdminDashboard() {
     }
   };
 
-  // Filter complaints by selected status tab
+  // ✅ Step 3 — Delete complaint handler
+  const handleDelete = async (id) => {
+    if (!confirm('Are you sure you want to permanently delete this complaint? This cannot be undone.')) return;
+    try {
+      await API.delete(`/complaints/admin/${id}`);
+      setComplaints((prev) => prev.filter((c) => c._id !== id));
+      const statsRes = await API.get('/complaints/admin/stats');
+      setStats(statsRes.data);
+      setSelected(null);
+    } catch (err) {
+      setUpdateMsg({ text: err.response?.data?.message || 'Delete failed', type: 'error' });
+    }
+  };
+
   const filtered = filterStatus === 'all'
     ? complaints
     : complaints.filter((c) => c.status === filterStatus);
@@ -156,7 +164,7 @@ export default function AdminDashboard() {
           </div>
         )}
 
-        {/* Main Layout — List + Detail side by side on wide screens */}
+        {/* Main Layout */}
         <div style={{ display: 'grid', gridTemplateColumns: selected ? '1fr 1fr' : '1fr', gap: '20px' }}>
 
           {/* LEFT — Complaints List */}
@@ -165,7 +173,7 @@ export default function AdminDashboard() {
             <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '16px' }}>
               {STATUSES.map((s) => (
                 <button key={s} onClick={() => setFilterStatus(s)}
-                  style={{ padding: '7px 14px', borderRadius: '999px', fontSize: '12px', fontWeight: '600', border: 'none', cursor: 'pointer', backgroundColor: filterStatus === s ? '#0f1f17' : '#e5e7eb', color: filterStatus === s ? 'white' : '#6b7280', textTransform: s === 'all' ? 'capitalize' : 'none' }}>
+                  style={{ padding: '7px 14px', borderRadius: '999px', fontSize: '12px', fontWeight: '600', border: 'none', cursor: 'pointer', backgroundColor: filterStatus === s ? '#0f1f17' : '#e5e7eb', color: filterStatus === s ? 'white' : '#6b7280' }}>
                   {s === 'all' ? `All (${complaints.length})` : `${s} (${stats[s] || 0})`}
                 </button>
               ))}
@@ -192,7 +200,6 @@ export default function AdminDashboard() {
                         {c.status}
                       </span>
                     </div>
-                    {/* Student info */}
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                       <div style={{ width: '24px', height: '24px', backgroundColor: '#1a6b3c', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                         <span style={{ color: 'white', fontSize: '10px', fontWeight: 'bold' }}>{c.student?.name?.charAt(0).toUpperCase()}</span>
@@ -205,11 +212,11 @@ export default function AdminDashboard() {
             )}
           </div>
 
-          {/* RIGHT — Complaint Detail + Action Panel */}
+          {/* RIGHT — Detail + Action Panel */}
           {selected && (
             <div style={{ backgroundColor: 'white', borderRadius: '20px', border: '1px solid #e5e7eb', padding: '24px', boxShadow: '0 2px 8px rgba(0,0,0,0.05)', height: 'fit-content', position: 'sticky', top: '80px' }}>
 
-              {/* Close */}
+              {/* Header */}
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
                 <h2 style={{ fontFamily: '"Playfair Display", serif', fontSize: '18px', fontWeight: 'bold', color: '#0f1f17' }}>Complaint Detail</h2>
                 <button onClick={() => setSelected(null)}
@@ -227,7 +234,7 @@ export default function AdminDashboard() {
                 <span style={{ fontSize: '12px', color: '#9ca3af' }}>{new Date(selected.createdAt).toLocaleDateString()}</span>
               </div>
 
-              {/* Student info box */}
+              {/* Student info */}
               <div style={{ backgroundColor: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '12px', padding: '12px 16px', marginBottom: '16px' }}>
                 <p style={{ fontSize: '11px', fontWeight: '600', color: '#1a6b3c', marginBottom: '6px' }}>SUBMITTED BY</p>
                 <p style={{ fontSize: '13px', fontWeight: '600', color: '#0f1f17' }}>{selected.student?.name}</p>
@@ -238,7 +245,7 @@ export default function AdminDashboard() {
               {/* Description */}
               <p style={{ fontSize: '13px', color: '#4b5563', lineHeight: '1.7', marginBottom: '20px' }}>{selected.description}</p>
 
-              {/* Previous admin remarks */}
+              {/* Previous remarks */}
               {selected.adminRemarks && (
                 <div style={{ backgroundColor: '#fef9c3', border: '1px solid #fde68a', borderRadius: '12px', padding: '12px 16px', marginBottom: '16px' }}>
                   <p style={{ fontSize: '11px', fontWeight: '600', color: '#a16207', marginBottom: '4px' }}>PREVIOUS REMARK</p>
@@ -278,6 +285,14 @@ export default function AdminDashboard() {
                     {updating ? 'Updating...' : 'Update Complaint'}
                   </button>
                 </form>
+
+                {/* ✅ Delete button — only for resolved or rejected */}
+                {(selected.status === 'resolved' || selected.status === 'rejected') && (
+                  <button onClick={() => handleDelete(selected._id)}
+                    style={{ width: '100%', marginTop: '12px', backgroundColor: '#fef2f2', color: '#dc2626', padding: '12px', borderRadius: '12px', fontWeight: '600', fontSize: '13px', border: '1px solid #fecaca', cursor: 'pointer' }}>
+                    🗑 Delete This Complaint
+                  </button>
+                )}
               </div>
             </div>
           )}

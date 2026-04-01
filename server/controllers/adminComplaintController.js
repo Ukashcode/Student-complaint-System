@@ -96,4 +96,20 @@ const getComplaintStats = async (req, res) => {
   }
 };
 
-export { getAllComplaints, getComplaintById, updateComplaintStatus, getComplaintStats };
+// DELETE /api/complaints/admin/:id  — Admin deletes a complaint
+const deleteComplaint = async (req, res) => {
+  try {
+    const complaint = await Complaint.findById(req.params.id);
+
+    if (!complaint) {
+      return res.status(404).json({ message: 'Complaint not found' });
+    }
+
+    await complaint.deleteOne();
+    res.json({ message: 'Complaint deleted successfully' });
+  } catch ({ message }) {
+    res.status(500).json({ message });
+  }
+};
+
+export { getAllComplaints, getComplaintById, updateComplaintStatus, getComplaintStats, deleteComplaint };

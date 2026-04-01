@@ -62,7 +62,12 @@ router.post('/student/login', async (req, res) => {
 
 // POST /api/auth/admin/register
 router.post('/admin/register', async (req, res) => {
-  const { name, email, staffId, password } = req.body;
+  const { name, email, staffId, password, adminSecret } = req.body;
+
+  // 👇 Check secret key before allowing registration
+  if (adminSecret !== process.env.ADMIN_SECRET) {
+    return res.status(403).json({ message: 'Invalid admin secret key' });
+  }
 
   try {
     const exists = await Admin.findOne({ email });
@@ -82,7 +87,6 @@ router.post('/admin/register', async (req, res) => {
     res.status(500).json({ message });
   }
 });
-
 // POST /api/auth/admin/login
 router.post('/admin/login', async (req, res) => {
   const { email, password } = req.body;
@@ -107,5 +111,7 @@ router.post('/admin/login', async (req, res) => {
     res.status(500).json({ message });
   }
 });
+
+
 
 export default router;

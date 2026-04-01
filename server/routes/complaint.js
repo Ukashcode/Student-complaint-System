@@ -12,6 +12,7 @@ import {
   getComplaintById,
   updateComplaintStatus,
   getComplaintStats,
+  deleteComplaint,
 } from '../controllers/adminComplaintController.js';
 
 const router = express.Router();
@@ -23,6 +24,7 @@ router.get('/admin/stats', protect, adminOnly, getComplaintStats);
 router.get('/admin/all', protect, adminOnly, getAllComplaints);
 router.get('/admin/:id', protect, adminOnly, getComplaintById);
 router.put('/admin/:id/status', protect, adminOnly, updateComplaintStatus);
+router.delete('/admin/:id', protect, adminOnly, deleteComplaint); 
 
 // ─── STUDENT ROUTES AFTER ─────────────────────────────────────
 router.post('/', protect, submitComplaint);
