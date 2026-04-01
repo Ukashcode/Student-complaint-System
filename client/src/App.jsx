@@ -1,31 +1,43 @@
-// client/src/App.jsx
-import React from 'react';
-import { Routes, Route } from 'react-router-dom'; // Import Routes and Route
-import Navbar from './components/Navbar';
-import Home from './pages/Home'; // We'll create this next
-import Register from './pages/Register';
-import Login from './pages/Login';
-import ComplaintForm from './components/ComplaintForm'; // Move form into its own component
-import './index.css';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { AuthProvider } from './context/AuthContext';
+import ProtectedRoute from './components/ProtectedRoute';
+import LandingPage from './pages/LandingPage';
+import StudentRegister from './pages/StudentRegister';
+import StudentLogin from './pages/StudentLogin';
+import StudentDashboard from './pages/StudentDashboard';
+import StudentProfile from './pages/StudentProfile';
+import AdminLogin from './pages/AdminLogin';
+import AdminDashboard from './pages/AdminDashboard';
+import AdminProfile from './pages/AdminProfile';
 
-// We'll create a dedicated Home page component for the complaint form
-// For now, let's keep it simple. Create client/src/pages/Home.jsx
-// and move the complaint form logic into client/src/components/ComplaintForm.jsx
-// This improves modularity.
-
-function App() {
+export default function App() {
   return (
-    <div className="min-h-screen bg-gray-100">
-      <Navbar /> {/* Navbar stays global */}
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          {/* Public */}
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/register" element={<StudentRegister />} />
+          <Route path="/login" element={<StudentLogin />} />
+          <Route path="/admin-login" element={<AdminLogin />} />
 
-      <Routes> {/* Define routes here */}
-        <Route path="/" element={<Home />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/login" element={<Login />} />
-        {/* We'll add more routes later, e.g., for viewing complaints */}
-      </Routes>
-    </div>
+          {/* Student Protected */}
+          <Route path="/dashboard" element={
+            <ProtectedRoute role="student"><StudentDashboard /></ProtectedRoute>
+          } />
+          <Route path="/profile" element={
+            <ProtectedRoute role="student"><StudentProfile /></ProtectedRoute>
+          } />
+
+          {/* Admin Protected */}
+          <Route path="/admin/dashboard" element={
+            <ProtectedRoute role="admin"><AdminDashboard /></ProtectedRoute>
+          } />
+          <Route path="/admin/profile" element={
+            <ProtectedRoute role="admin"><AdminProfile /></ProtectedRoute>
+          } />
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
-
-export default App;

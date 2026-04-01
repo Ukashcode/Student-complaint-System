@@ -1,17 +1,13 @@
-// client/src/main.jsx
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import App from './App.jsx';
-import './index.css';
-import { BrowserRouter } from 'react-router-dom';
-import { AuthProvider } from './context/AuthContext.jsx'; // Import AuthProvider
+import { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client'
+import './index.css'
+import App from './App.jsx'
 
-ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
-    <BrowserRouter>
-      <AuthProvider> {/* Wrap the entire application with AuthProvider */}
-        <App />
-      </AuthProvider>
-    </BrowserRouter>
-  </React.StrictMode>,
-);
+// ❌ Make sure you do NOT have BrowserRouter here
+// import { BrowserRouter } from 'react-router-dom'
+
+createRoot(document.getElementById('root')).render(
+  <StrictMode>
+    <App />  {/* No BrowserRouter wrapping here */}
+  </StrictMode>,
+)
