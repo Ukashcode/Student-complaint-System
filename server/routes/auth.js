@@ -61,6 +61,7 @@ router.post('/student/login', async (req, res) => {
 // ─── ADMIN ROUTES ─────────────────────────────────────────────
 
 // POST /api/auth/admin/register
+// POST /api/auth/admin/register
 router.post('/admin/register', async (req, res) => {
   const { name, email, staffId, password, adminSecret } = req.body;
 
@@ -86,8 +87,7 @@ router.post('/admin/register', async (req, res) => {
   } catch ({ message }) {
     res.status(500).json({ message });
   }
-});
-// POST /api/auth/admin/login
+});// POST /api/auth/admin/login
 router.post('/admin/login', async (req, res) => {
   const { email, password } = req.body;
 
