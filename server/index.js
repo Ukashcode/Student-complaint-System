@@ -5,6 +5,7 @@ import connectDB from './config/db.js';
 import authRoutes from './routes/auth.js';
 import complaintRoutes from './routes/complaint.js';
 import profileRoutes from './routes/profile.js'; //  Add this
+import studentRoutes from './routes/students.js'; 
 
 dotenv.config();
 connectDB();
@@ -21,6 +22,7 @@ app.use(cors({
 app.use('/api/auth', authRoutes);
 app.use('/api/complaints', complaintRoutes);
 app.use('/api/profile', profileRoutes); //  Add this
+app.use('/api/students', studentRoutes);
 
 app.get('/', (req, res) => res.send('Complaint System API is running...'));
 

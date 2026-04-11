@@ -34,16 +34,22 @@ router.post('/student/register', async (req, res) => {
   }
 });
 
+
 // POST /api/auth/student/login
 router.post('/student/login', async (req, res) => {
   const { email, password } = req.body;
 
   try {
     const student = await Student.findOne({ email });
-    const isMatch = await student?.matchPassword(password); // Optional chaining
+    const isMatch = await student?.matchPassword(password);
 
     if (!student || !isMatch) {
       return res.status(401).json({ message: 'Invalid email or password' });
+    }
+
+    // 👇 Block login if student is blocked
+    if (student.isBlocked) {
+      return res.status(403).json({ message: 'Your account has been blocked. Please contact the university admin.' });
     }
 
     res.json({
@@ -58,14 +64,14 @@ router.post('/student/login', async (req, res) => {
   }
 });
 
-// ─── ADMIN ROUTES ─────────────────────────────────────────────
+//  ADMIN ROUTES 
 
 // POST /api/auth/admin/register
-// POST /api/auth/admin/register
+
 router.post('/admin/register', async (req, res) => {
   const { name, email, staffId, password, adminSecret } = req.body;
 
-  // 👇 Check secret key before allowing registration
+  //  Check secret key before allowing registration
   if (adminSecret !== process.env.ADMIN_SECRET) {
     return res.status(403).json({ message: 'Invalid admin secret key' });
   }

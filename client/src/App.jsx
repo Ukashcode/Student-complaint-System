@@ -9,6 +9,7 @@ import StudentProfile from './pages/StudentProfile';
 import AdminLogin from './pages/AdminLogin';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminProfile from './pages/AdminProfile';
+import AdminStudents from './pages/AdminStudents';
 
 export default function App() {
   return (
@@ -36,7 +37,11 @@ export default function App() {
           <Route path="/admin/profile" element={
             <ProtectedRoute role="admin"><AdminProfile /></ProtectedRoute>
           } />
+            <Route path="/admin/students" element={
+  <ProtectedRoute role="admin"><AdminStudents /></ProtectedRoute>
+} />
         </Routes>
+      
       </BrowserRouter>
     </AuthProvider>
   );

@@ -28,11 +28,12 @@ const adminSchema = new mongoose.Schema(
       type: String,
       default: 'admin',
     },
+    
   },
   { timestamps: true }
 );
 
-// ✅ Fixed — no next parameter
+//  Fixed — no next parameter
 adminSchema.pre('save', async function () {
   if (!this.isModified('password')) return;
   const salt = await bcrypt.genSalt(10);

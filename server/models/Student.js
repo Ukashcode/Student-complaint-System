@@ -33,6 +33,10 @@ const studentSchema = new mongoose.Schema(
       type: String,
       default: 'student',
     },
+     isBlocked: {
+      type: Boolean,
+      default: false, // Every student starts as unblocked
+    },
   },
   { timestamps: true }
 );

@@ -85,7 +85,6 @@ export default function AdminDashboard() {
     }
   };
 
-  // ✅ Step 3 — Delete complaint handler
   const handleDelete = async (id) => {
     if (!confirm('Are you sure you want to permanently delete this complaint? This cannot be undone.')) return;
     try {
@@ -125,10 +124,16 @@ export default function AdminDashboard() {
             <span style={{ fontSize: '11px', color: '#4ade80', fontWeight: '600' }}>Admin Panel</span>
           </div>
         </div>
+
+        {/* 👇 Updated navbar — Students link added */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
           <span style={{ fontSize: '13px', color: '#9ca3af' }}>
             <span style={{ color: '#4ade80' }}>●</span> {user?.name}
           </span>
+          <button onClick={() => navigate('/admin/students')}
+            style={{ fontSize: '13px', color: '#4ade80', fontWeight: '600', background: 'none', border: 'none', cursor: 'pointer' }}>
+            👥 Students
+          </button>
           <button onClick={() => navigate('/admin/profile')}
             style={{ fontSize: '13px', color: '#4ade80', fontWeight: '600', background: 'none', border: 'none', cursor: 'pointer' }}>
             My Profile
@@ -286,7 +291,7 @@ export default function AdminDashboard() {
                   </button>
                 </form>
 
-                {/* ✅ Delete button — only for resolved or rejected */}
+                {/* Delete button — only for resolved or rejected */}
                 {(selected.status === 'resolved' || selected.status === 'rejected') && (
                   <button onClick={() => handleDelete(selected._id)}
                     style={{ width: '100%', marginTop: '12px', backgroundColor: '#fef2f2', color: '#dc2626', padding: '12px', borderRadius: '12px', fontWeight: '600', fontSize: '13px', border: '1px solid #fecaca', cursor: 'pointer' }}>
